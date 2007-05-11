@@ -2,7 +2,7 @@ import sys
 from setuptools import setup, Extension
 
 from motmot_utils import get_svnversion_persistent
-version_str = '0.3.dev%(svnversion)s'
+version_str = '0.4.dev%(svnversion)s'
 version = get_svnversion_persistent('imops_version.py',version_str)
 
 import numpy
