@@ -1,18 +1,15 @@
 import sys
 from setuptools import setup, Extension
 
-from motmot_utils import get_svnversion_persistent
-version_str = '0.4.dev%(svnversion)s'
-version = get_svnversion_persistent('imops_version.py',version_str)
-
 import numpy
 
 setup(name="imops",
-      version=version,
+      description="image format conversion for the motmot camera packages",
+      version="0.5.0",
       license="BSD",
       maintainer="Andrew Straw",
       maintainer_email="strawman@astraw.com",
-      py_modules=['imops_version'],
+      URL="http://code.astraw.com/projects/motmot",
       ext_modules=[Extension(name="imops",
                              sources=['src/imops.pyx','src/color_convert.c',],
                              include_dirs=[numpy.get_include()],
