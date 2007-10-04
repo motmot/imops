@@ -5,7 +5,7 @@ import numpy
 
 setup(name="imops",
       description="image format conversion for the motmot camera packages",
-      version="0.5.0",
+      version="0.5.1",
       license="BSD",
       maintainer="Andrew Straw",
       maintainer_email="strawman@astraw.com",
