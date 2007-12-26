@@ -1,16 +1,18 @@
 import sys
-from setuptools import setup, Extension
+from setuptools import setup, Extension, find_packages
 
 import numpy
 
-setup(name="imops",
+setup(name="motmot.imops",
       description="image format conversion for the motmot camera packages",
-      version="0.5.1",
+      version="0.5.2",
       license="BSD",
       maintainer="Andrew Straw",
       maintainer_email="strawman@astraw.com",
       url="http://code.astraw.com/projects/motmot",
-      ext_modules=[Extension(name="imops",
+      packages = find_packages(),
+      namespace_packages = ['motmot'],
+      ext_modules=[Extension(name="motmot.imops.imops",
                              sources=['src/imops.pyx','src/color_convert.c',],
                              include_dirs=[numpy.get_include()],
                              ),
