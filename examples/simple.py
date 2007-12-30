@@ -1,6 +1,6 @@
 # show mono16 format logic
 import numpy
-import imops
+import motmot.imops.imops as imops
 
 h = 2
 w = 3
