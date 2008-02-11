@@ -4,7 +4,10 @@ from setuptools import setup, Extension, find_packages
 import numpy
 
 setup(name="motmot.imops",
-      description="image format conversion for the motmot camera packages",
+      description="image format conversion (e.g. between MONO8, YUV422, and RGB)",
+      long_description = """
+This is a subpackage of the motmot family of digital image utilities.
+""",
       version="0.5.2",
       license="BSD",
       maintainer="Andrew Straw",
