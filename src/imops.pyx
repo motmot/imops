@@ -10,7 +10,12 @@ cdef extern from "color_convert.h":
         unsigned char R
         unsigned char G
         unsigned char B
+    ctypedef struct YUV444_t:
+        unsigned char Y
+        unsigned char U
+        unsigned char V
     cdef RGB888_t YUV444toRGB888(unsigned char Y, unsigned char U, unsigned char V)
+    cdef YUV444_t RGB888toYUV444(unsigned char r, unsigned char g, unsigned char b)
     cdef void mono16_buf_to_mono8_buf(u_int16_t *mono16_buf,
                                       u_int8_t *mono8_buf,
                                       int len)

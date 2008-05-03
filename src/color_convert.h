@@ -6,8 +6,16 @@ typedef struct
 }
 RGB888_t;
 
-extern RGB888_t YUV444toRGB888(unsigned char Y, unsigned char U, unsigned char V);
+typedef struct 
+{
+  unsigned char Y;
+  unsigned char U;
+  unsigned char V;
+}
+YUV444_t;
 
+extern RGB888_t YUV444toRGB888(unsigned char Y, unsigned char U, unsigned char V);
+extern YUV444_t RGB888toYUV444(unsigned char r, unsigned char g, unsigned char b);
 
 
 #ifdef _WIN32
