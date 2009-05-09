@@ -1,6 +1,7 @@
 #emacs, this is -*-Python-*- mode
 import numpy
 import numpy as np
+import warnings
 cimport c_python
 cimport c_numpy
 
@@ -338,6 +339,9 @@ def to_rgb8(format,image):
         rgb8 = mono8_to_rgb8( mono8 )
     elif format == 'MONO8:BGGR':
         rgb8 = mono8_bayer_bggr_to_rgb8( image )
+    elif format.startswith('MONO8:'):
+        warnings.warn('converting Bayer mosaic to grayscale')
+        rgb8 = mono8_to_rgb8( image )
     else:
         raise ValueError('unsupported conversion from format "%s" to RGB8'%format)
     return rgb8
