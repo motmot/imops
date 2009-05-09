@@ -1,0 +1,13 @@
+build
+dist
+src/imops.c
+motmot.imops.egg-info/PKG-INFO
+motmot.imops.egg-info/SOURCES.txt
+motmot.imops.egg-info/dependency_links.txt
+motmot.imops.egg-info/namespace_packages.txt
+motmot.imops.egg-info/top_level.txt
+motmot.imops.egg-info/zip-safe
+*.pyc
+*~
+motmot/imops/imops.so
+motmot.imops.egg-info/requires.txt
