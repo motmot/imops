@@ -350,6 +350,9 @@ def to_mono8(format,image):
     image = numpy.array(image) # cast as numpy
     if format == 'MONO8':
         mono8 = image
+    elif format.startswith('MONO8:'):
+        warnings.warn('converting Bayer mosaic to grayscale')
+        mono8 = image
     elif format == 'MONO16':
         mono8 = mono16_to_mono8_middle8bits( image )
     elif format == 'YUV422':
