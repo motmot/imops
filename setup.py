@@ -18,7 +18,7 @@ This is a subpackage of the motmot family of digital image utilities.
       license="BSD",
       maintainer="Andrew Straw",
       maintainer_email="strawman@astraw.com",
-      url="http://code.astraw.com/projects/motmot",
+      url="http://code.astraw.com/projects/motmot/imops.html",
       packages = find_packages(),
       namespace_packages = ['motmot'],
       ext_modules=[Extension(name="motmot.imops.imops",
