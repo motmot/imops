@@ -76,11 +76,11 @@ def mono8_to_rgb8(arr,skip_check=False):
     if not c_python.PyCObject_Check(attr):
         raise ValueError("invalid __array_struct__")
 
-    if do_check:
-        inter = <PyArrayInterface*>c_python.PyCObject_AsVoidPtr(attr)
-        if inter.version != 2:
-            raise ValueError("invalid __array_struct__")
+    inter = <PyArrayInterface*>c_python.PyCObject_AsVoidPtr(attr)
+    if inter.version != 2:
+        raise ValueError("invalid __array_struct__")
 
+    if do_check:
         # TODO: don't really know what these flags all mean, figure out if
         # this is OK:
         if (inter.flags & (ALIGNED | WRITEABLE)) != (ALIGNED | WRITEABLE):
