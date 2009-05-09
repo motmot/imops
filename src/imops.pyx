@@ -1,5 +1,6 @@
 #emacs, this is -*-Python-*- mode
 import numpy
+import numpy as np
 cimport c_python
 cimport c_numpy
 
@@ -108,6 +109,58 @@ def mono8_to_rgb8(arr,skip_check=False):
                 rgb8_data_ptr=rgb8_data_ptr+1
             mono8_data_ptr = mono8_data_ptr + inter.strides[1]
     c_python.Py_END_ALLOW_THREADS
+
+    return rgb8
+
+def mono8_bayer_bggr_to_rgb8( arr ):
+    cdef int i,j,k,height,width
+    cdef char *rgb8_data_ptr, *mono8_data_ptr, *mono8_row_ptr
+    cdef char cur_red, cur_green, cur_blue
+    cdef c_numpy.ndarray rgb8
+    cdef PyArrayInterface* inter
+    cdef int do_check
+
+    height, width = arr.shape
+    rgb8 = numpy.zeros(( height, width, 3), numpy.uint8)
+
+    r_rows = np.arange(1,height,2)
+    r_cols = np.arange(1,width,2)
+    R_rows,R_cols = np.meshgrid(r_rows,r_cols)
+    bggr_r_pattern = R_rows.ravel(), R_cols.ravel()
+
+    g0_rows = np.arange(0,height,2)
+    g0_cols = np.arange(1,width,2)
+    G0_rows,G0_cols = np.meshgrid(g0_rows,g0_cols)
+    bggr_g0_pattern = G0_rows.ravel(), G0_cols.ravel()
+
+    g1_rows = np.arange(1,height,2)
+    g1_cols = np.arange(0,width,2)
+    G1_rows,G1_cols = np.meshgrid(g1_rows,g1_cols)
+    bggr_g1_pattern = G1_rows.ravel(), G1_cols.ravel()
+
+    b_rows = np.arange(0,height,2)
+    b_cols = np.arange(0,width,2)
+    B_rows,B_cols = np.meshgrid(b_rows,b_cols)
+    bggr_b_pattern = B_rows.ravel(), B_cols.ravel()
+
+    transposed_shape = width/2,height/2 # integer division
+    r_data = arr[bggr_r_pattern]
+    r_data.shape = transposed_shape
+    r_data = r_data.T
+    g0_data = arr[bggr_g0_pattern]
+    g0_data.shape = transposed_shape
+    g0_data = g0_data.T
+    g1_data = arr[bggr_g1_pattern]
+    g1_data.shape = transposed_shape
+    g1_data = g1_data.T
+    b_data = arr[bggr_b_pattern]
+    b_data.shape = transposed_shape
+    b_data = b_data.T
+
+    rgb8[:,:,2] = r_data.repeat(2,axis=0).repeat(2,axis=1)
+    rgb8[0::2,:,1] = g0_data.repeat(2,axis=1)
+    rgb8[1::2,:,1] = g1_data.repeat(2,axis=1)
+    rgb8[:,:,0] = b_data.repeat(2,axis=0).repeat(2,axis=1)
 
     return rgb8
 
@@ -283,6 +336,8 @@ def to_rgb8(format,image):
     elif format == 'MONO16':
         mono8 = mono16_to_mono8_middle8bits( image )
         rgb8 = mono8_to_rgb8( mono8 )
+    elif format == 'MONO8:BGGR':
+        rgb8 = mono8_bayer_bggr_to_rgb8( image )
     else:
         raise ValueError('unsupported conversion from format "%s" to RGB8'%format)
     return rgb8
