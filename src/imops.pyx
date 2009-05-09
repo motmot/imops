@@ -1,4 +1,5 @@
 #emacs, this is -*-Python-*- mode
+"""manipulate image codings"""
 import numpy
 import numpy as np
 import warnings
@@ -323,6 +324,20 @@ def yuv411_to_rgb8(c_numpy.ndarray yuv411):
     return rgb8
 
 def to_rgb8(format,image):
+    """convert image to RGB8 encoding
+
+    Arguments
+
+    format : string
+      a string specifying the input format (e.g. 'MONO8','YUV422', etc.)
+    image : array-like
+      the raw image data in the format specified
+
+    Returns
+
+    rgb8 : array-like
+      the image data in RGB8 encoding
+    """
     image = numpy.array(image) # cast as numpy
     if format == 'RGB8':
         rgb8 = rgb8_to_rgb8( image )
@@ -347,6 +362,20 @@ def to_rgb8(format,image):
     return rgb8
 
 def to_mono8(format,image):
+    """convert image to MONO8 encoding
+
+    Arguments
+
+    format : string
+      a string specifying the input format (e.g. 'MONO8','YUV422', etc.)
+    image : array-like
+      the raw image data in the format specified
+
+    Returns
+
+    mono8 : array-like
+      the image data in MONO8 encoding
+    """
     image = numpy.array(image) # cast as numpy
     if format == 'MONO8':
         mono8 = image
