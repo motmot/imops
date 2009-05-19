@@ -9,7 +9,7 @@ import numpy
 kws = {}
 if not int(os.getenv( 'DISABLE_INSTALL_REQUIRES','0' )):
     kws['install_requires'] = [
-        'numpy>=1.0.4',
+        #'numpy>=1.0.4',
         ]
 
 setup(name="motmot.imops",
