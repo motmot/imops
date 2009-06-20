@@ -115,6 +115,7 @@ def mono8_to_rgb8(arr,skip_check=False):
     return rgb8
 
 def mono8_bayer_bggr_to_rgb8( arr ):
+    # This is a super-crappy conversion I just hacked together.
     cdef int i,j,k,height,width
     cdef char *rgb8_data_ptr, *mono8_data_ptr, *mono8_row_ptr
     cdef char cur_red, cur_green, cur_blue
@@ -165,6 +166,11 @@ def mono8_bayer_bggr_to_rgb8( arr ):
     rgb8[:,:,0] = b_data.repeat(2,axis=0).repeat(2,axis=1)
 
     return rgb8
+
+def mono32f_bayer_bggr_to_rgb8( arr ):
+    # convert to uint8 and convert
+    arr = np.array(arr).astype(np.uint8)
+    return mono8_bayer_bggr_to_rgb8( arr )
 
 def mono16_to_mono8_middle8bits(c_numpy.ndarray mono16):
     cdef int height, width, width_in_bytes
@@ -354,6 +360,8 @@ def to_rgb8(format,image):
         rgb8 = mono8_to_rgb8( mono8 )
     elif format == 'MONO8:BGGR':
         rgb8 = mono8_bayer_bggr_to_rgb8( image )
+    elif format == 'MONO32f:BGGR':
+        rgb8 = mono32f_bayer_bggr_to_rgb8( image )
     elif format.startswith('MONO8:'):
         warnings.warn('converting Bayer mosaic to grayscale')
         rgb8 = mono8_to_rgb8( image )
