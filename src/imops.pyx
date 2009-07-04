@@ -47,7 +47,6 @@ ctypedef struct PyArrayInterface:
     void *data                    # A pointer to the first element of the array
 
 def rgb8_to_rgb8(arr,skip_check=False):
-    """use array interface to share data but possibly reshape array"""
     rgb8 = numpy.asarray(arr) # view of data (if possible)
     s = rgb8.shape
     if len(s) == 2:
@@ -58,7 +57,6 @@ def rgb8_to_rgb8(arr,skip_check=False):
     else: return rgb8
 
 def argb8_to_rgb8(arr,skip_check=False):
-    """use array interface to share data but possibly reshape array"""
     argb8 = numpy.asarray(arr) # view of data (if possible)
     height,datawidth=arr.shape
     width=datawidth/4
