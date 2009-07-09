@@ -65,6 +65,7 @@ def argb8_to_rgb8(arr,skip_check=False):
     return rgb8
 
 def mono8_to_rgb8(arr,skip_check=False):
+    # convert to rgb8 by repeating each grayscale value for R,G,B
     cdef int i,j,k,height,width
     cdef char *rgb8_data_ptr, *mono8_data_ptr, *mono8_row_ptr
     cdef c_numpy.ndarray rgb8
@@ -367,7 +368,7 @@ def to_rgb8(format,image):
         raise ValueError('unsupported conversion from format "%s" to RGB8'%format)
     return rgb8
 
-def to_mono8(format,image):
+def to_mono8(format,image,fast_but_inaccurate=False):
     """convert image to MONO8 encoding
 
     Arguments
@@ -386,8 +387,12 @@ def to_mono8(format,image):
     if format == 'MONO8':
         mono8 = image
     elif format.startswith('MONO8:'):
-        warnings.warn('converting Bayer mosaic to grayscale')
-        mono8 = image
+        if fast_but_inaccurate:
+            warnings.warn('converting Bayer mosaic to grayscale')
+            mono8 = image
+        else:
+            rgb8 = to_rgb8(format,image)
+            mono8 = np.mean(rgb8,axis=2).astype(np.uint8)
     elif format == 'MONO16':
         mono8 = mono16_to_mono8_middle8bits( image )
     elif format == 'YUV422':
