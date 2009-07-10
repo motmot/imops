@@ -400,3 +400,12 @@ def to_mono8(format,image,fast_but_inaccurate=False):
     else:
         raise ValueError('unsupported conversion from format "%s" to RGB8'%format)
     return mono8
+
+def is_coding_color(coding):
+    """return whether a coding represents a color image"""
+    if (coding.startswith('MONO8:') or
+        coding.startswith('YUV') or
+        coding.startswith('RGB')):
+        return True
+    else:
+        return False
