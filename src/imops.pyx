@@ -91,8 +91,14 @@ def mono8_to_rgb8(arr,skip_check=False):
         if inter.nd != 2:
             raise ValueError("only 2D arrays are accepted (currently) mono8")
 
-        if not (inter.typekind == "u"[0] and inter.itemsize==1):
-            raise TypeError("must be uint8 arrays")
+        if isinstance(inter.typekind,int):
+            # Cython
+            if not (inter.typekind == ord('u') and inter.itemsize==1):
+                raise TypeError("must be uint8 arrays")
+        else:
+            # pyrex
+            if not (inter.typekind == "u"[0] and inter.itemsize==1):
+                raise TypeError("must be uint8 arrays")
 
     height = inter.shape[0]
     width = inter.shape[1]
