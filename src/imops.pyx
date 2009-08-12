@@ -212,7 +212,13 @@ def yuv422_to_mono8(c_numpy.ndarray yuv422):
         raise ValueError("input to yuv422_to_rgb8 must be contiguous, aligned, and not byteswapped")
     if not len(yuv422.shape)==2:
         raise ValueError("input to yuv422_to_mono8 must be 2D array")
-    height, width_in_bytes = yuv422.shape
+    if yuv422.dtype == np.uint8:
+        height, width_in_bytes = yuv422.shape
+    elif yuv422.dtype == np.uint16:
+        height = yuv422.shape[0]
+        width_in_bytes = yuv422.shape[1]*2
+    else:
+        raise ValueError('unsupported dtype for image')
     width = int(width_in_bytes/bytes_per_pixel)
 
     mono8 = numpy.zeros(( height, width), numpy.uint8)
@@ -248,7 +254,13 @@ def yuv422_to_rgb8(c_numpy.ndarray yuv422):
         raise ValueError("input to yuv422_to_rgb8 must be contiguous, aligned, and not byteswapped")
     if not len(yuv422.shape)==2:
         raise ValueError("input to yuv422_to_rgb8 must be 2D array")
-    height, width_in_bytes = yuv422.shape
+    if yuv422.dtype == np.uint8:
+        height, width_in_bytes = yuv422.shape
+    elif yuv422.dtype == np.uint16:
+        height = yuv422.shape[0]
+        width_in_bytes = yuv422.shape[1]*2
+    else:
+        raise ValueError('unsupported dtype for image')
     width = int(width_in_bytes/bytes_per_pixel)
 
     rgb8 = numpy.zeros(( height, width, 3), numpy.uint8)
