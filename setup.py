@@ -17,7 +17,7 @@ setup(name="motmot.imops",
       long_description = """
 This is a subpackage of the motmot family of digital image utilities.
 """,
-      version="0.5.5",
+      version="0.5.6",
       license="BSD",
       maintainer="Andrew Straw",
       maintainer_email="strawman@astraw.com",
