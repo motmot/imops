@@ -416,7 +416,7 @@ def to_mono8(format,image,fast_but_inaccurate=False):
     elif format == 'YUV422':
          mono8 = yuv422_to_mono8(image)
     else:
-        raise ValueError('unsupported conversion from format "%s" to RGB8'%format)
+        raise ValueError('unsupported conversion from format "%s" to MONO8'%format)
     return mono8
 
 def is_coding_color(coding):
