@@ -177,6 +177,11 @@ def mono32f_bayer_bggr_to_rgb8( arr ):
     arr = np.array(arr).astype(np.uint8)
     return mono8_bayer_bggr_to_rgb8( arr )
 
+def mono32f_to_mono8( arr ):
+    # convert to uint8
+    arr = np.array(arr).astype(np.uint8)
+    return arr
+
 def mono16_to_mono8_middle8bits(c_numpy.ndarray mono16):
     cdef int height, width, width_in_bytes
     cdef int pixpair
@@ -415,6 +420,8 @@ def to_mono8(format,image,fast_but_inaccurate=False):
         mono8 = mono16_to_mono8_middle8bits( image )
     elif format == 'YUV422':
          mono8 = yuv422_to_mono8(image)
+    elif format == 'MONO32f':
+        mono8 = mono32f_to_mono8( image )
     else:
         raise ValueError('unsupported conversion from format "%s" to MONO8'%format)
     return mono8
