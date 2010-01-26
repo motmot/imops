@@ -56,6 +56,17 @@ def rgb8_to_rgb8(arr,skip_check=False):
       return rgb8
     else: return rgb8
 
+def rgb32f_to_rgb8(arr,skip_check=False):
+    rgb8f = numpy.array(arr)*255.0
+    rgb8 = rgb8f.astype(np.uint8)
+    s = rgb8.shape
+    if len(s) == 2:
+      height = s[0]
+      width = s[1]/3
+      rgb8.shape = ( height, width, 3)
+      return rgb8
+    else: return rgb8
+
 def argb8_to_rgb8(arr,skip_check=False):
     argb8 = numpy.asarray(arr) # view of data (if possible)
     height,datawidth=arr.shape
@@ -387,6 +398,8 @@ def to_rgb8(format,image):
     elif format.startswith('MONO8:'):
         warnings.warn('converting Bayer mosaic to grayscale')
         rgb8 = mono8_to_rgb8( image )
+    elif format == 'RGB32f':
+        rgb8 = rgb32f_to_rgb8( image )
     else:
         raise ValueError('unsupported conversion from format "%s" to RGB8'%format)
     return rgb8
