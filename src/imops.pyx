@@ -57,7 +57,7 @@ def rgb8_to_rgb8(arr,skip_check=False):
     else: return rgb8
 
 def rgb32f_to_rgb8(arr,skip_check=False):
-    rgb8f = numpy.array(arr)*255.0
+    rgb8f = numpy.array(arr)
     rgb8 = rgb8f.astype(np.uint8)
     s = rgb8.shape
     if len(s) == 2:
