@@ -7,10 +7,6 @@ import numpy
 #  Make sure to generate src/imops.c with "pyrexc src/imops.pyx".
 
 kws = {}
-if not int(os.getenv( 'DISABLE_INSTALL_REQUIRES','0' )):
-    kws['install_requires'] = [
-        #'numpy>=1.0.4',
-        ]
 
 setup(name="motmot.imops",
       description="image format conversion (e.g. between MONO8, YUV422, and RGB)",
