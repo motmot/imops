@@ -3,9 +3,6 @@ from setuptools import setup, Extension, find_packages
 
 import numpy
 
-# Note when building sdist package:
-#  Make sure to generate src/imops.c with "pyrexc src/imops.pyx".
-
 kws = {}
 
 setup(name="motmot.imops",

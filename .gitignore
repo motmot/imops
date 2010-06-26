@@ -1,6 +1,5 @@
 build
 dist
-src/imops.c
 motmot.imops.egg-info/PKG-INFO
 motmot.imops.egg-info/SOURCES.txt
 motmot.imops.egg-info/dependency_links.txt
