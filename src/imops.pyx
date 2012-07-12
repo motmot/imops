@@ -447,3 +447,10 @@ def is_coding_color(coding):
         return True
     else:
         return False
+
+def auto_convert(format, image):
+    """return a 2d array if image is monochrome, a 3d array if color"""
+    if is_coding_color(format):
+        return to_rgb8(format,image)
+    else:
+        return to_mono8(format,image)
