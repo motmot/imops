@@ -391,11 +391,11 @@ def to_rgb8(format,image):
     elif format == 'MONO16':
         mono8 = mono16_to_mono8_middle8bits( image )
         rgb8 = mono8_to_rgb8( mono8 )
-    elif format == 'MONO8:BGGR':
+    elif format == 'MONO8:BGGR' or format == 'RAW8:BGGR':
         rgb8 = mono8_bayer_bggr_to_rgb8( image )
     elif format == 'MONO32f:BGGR':
         rgb8 = mono32f_bayer_bggr_to_rgb8( image )
-    elif format.startswith('MONO8:'):
+    elif format.startswith('MONO8:') or format.startswith('RAW8:'):
         warnings.warn('converting Bayer mosaic to grayscale')
         rgb8 = mono8_to_rgb8( image )
     elif format == 'RGB32f':
@@ -422,7 +422,7 @@ def to_mono8(format,image,fast_but_inaccurate=False):
     image = numpy.array(image) # cast as numpy
     if format == 'MONO8':
         mono8 = image
-    elif format.startswith('MONO8:'):
+    elif format.startswith('MONO8:') or format.startswith('RAW8:'):
         if fast_but_inaccurate:
             warnings.warn('converting Bayer mosaic to grayscale')
             mono8 = image
@@ -442,6 +442,7 @@ def to_mono8(format,image,fast_but_inaccurate=False):
 def is_coding_color(coding):
     """return whether a coding represents a color image"""
     if (coding.startswith('MONO8:') or
+        coding.startswith('RAW8:') or
         coding.startswith('YUV') or
         coding.startswith('RGB')):
         return True
