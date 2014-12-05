@@ -400,6 +400,9 @@ def to_rgb8(format,image):
         rgb8 = mono8_to_rgb8( image )
     elif format == 'RGB32f':
         rgb8 = rgb32f_to_rgb8( image )
+    elif format == 'MONO32f':
+        mono8 = mono32f_to_mono8( image )
+        rgb8 = mono8_to_rgb8( mono8 )
     else:
         raise ValueError('unsupported conversion from format "%s" to RGB8'%format)
     return rgb8
