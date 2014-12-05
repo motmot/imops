@@ -1,9 +1,12 @@
 import sys, os
-from setuptools import setup, Extension, find_packages
+from distutils.core import setup
+from distutils.extension import Extension
+from Cython.Distutils import build_ext
+
+cmdclass = {}
+cmdclass['build_ext'] = build_ext
 
 import numpy
-
-kws = {}
 
 setup(name="motmot.imops",
       description="image format conversion (e.g. between MONO8, YUV422, and RGB)",
@@ -15,12 +18,12 @@ This is a subpackage of the motmot family of digital image utilities.
       maintainer="Andrew Straw",
       maintainer_email="strawman@astraw.com",
       url="http://code.astraw.com/projects/motmot/imops.html",
-      packages = find_packages(),
+      packages = ['motmot','motmot.imops'],
       namespace_packages = ['motmot'],
       ext_modules=[Extension(name="motmot.imops.imops",
-                             sources=['src/imops.c','src/color_convert.c',],
+                             sources=['src/imops.pyx','src/color_convert.c',],
                              include_dirs=[numpy.get_include()],
                              ),
                    ],
-      zip_safe = True,
-      **kws)
+      cmdclass=cmdclass,
+      )
