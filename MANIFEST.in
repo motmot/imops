@@ -1,1 +1,7 @@
 include src/imops.c
+include API.rst
+include LICENSE.txt
+include examples/*
+include src/*
+include stdeb.cfg
+include MANIFEST.in
