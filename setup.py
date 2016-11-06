@@ -9,7 +9,7 @@ setup(name="motmot.imops",
       long_description = """
 This is a subpackage of the motmot family of digital image utilities.
 """,
-      version="0.5.8",
+      version="0.5.9",
       license="BSD",
       maintainer="Andrew Straw",
       maintainer_email="strawman@astraw.com",
