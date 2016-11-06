@@ -1,10 +1,7 @@
 import sys, os
 from distutils.core import setup
 from distutils.extension import Extension
-from Cython.Distutils import build_ext
-
-cmdclass = {}
-cmdclass['build_ext'] = build_ext
+from Cython.Build import cythonize
 
 import numpy
 
@@ -20,10 +17,9 @@ This is a subpackage of the motmot family of digital image utilities.
       url="http://code.astraw.com/projects/motmot/imops.html",
       packages = ['motmot','motmot.imops'],
       namespace_packages = ['motmot'],
-      ext_modules=[Extension(name="motmot.imops.imops",
+      ext_modules=cythonize([Extension(name="motmot.imops.imops",
                              sources=['src/imops.pyx','src/color_convert.c',],
                              include_dirs=[numpy.get_include()],
                              ),
-                   ],
-      cmdclass=cmdclass,
+                   ]),
       )
