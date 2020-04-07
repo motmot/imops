@@ -1,5 +1,8 @@
 #emacs, this is -*-Python-*- mode
+# cython: language_level=2
 """manipulate image codings"""
+cimport cython
+cimport numpy as np
 import numpy
 import numpy as np
 import warnings
@@ -75,67 +78,42 @@ def argb8_to_rgb8(arr,skip_check=False):
     rgb8 = numpy.array(argb8[:,:,1:],copy=True) # make contiguous
     return rgb8
 
-def mono8_to_rgb8(arr,skip_check=False):
+@cython.boundscheck(False)
+def mono8_to_rgb8(const np.uint8_t[:, :] arr,skip_check=False):
     # convert to rgb8 by repeating each grayscale value for R,G,B
-    cdef int i,j,k,height,width
-    cdef char *rgb8_data_ptr, *mono8_data_ptr, *mono8_row_ptr
-    cdef c_numpy.ndarray rgb8
-    cdef PyArrayInterface* inter
+    cdef size_t i,j,k,height,width
     cdef int do_check
 
     do_check = not skip_check
 
-    attr = arr.__array_struct__
-    if not c_python.PyCObject_Check(attr):
-        raise ValueError("invalid __array_struct__")
-
-    inter = <PyArrayInterface*>c_python.PyCObject_AsVoidPtr(attr)
-    if inter.version != 2:
-        raise ValueError("invalid __array_struct__")
-
     if do_check:
-        # TODO: don't really know what these flags all mean, figure out if
-        # this is OK:
-        if (inter.flags & (ALIGNED | WRITEABLE)) != (ALIGNED | WRITEABLE):
-            raise ValueError("cannot handle misaligned or not writeable arrays.")
-
-        if inter.nd != 2:
+        if arr.nd != 2:
             raise ValueError("only 2D arrays are accepted (currently) mono8")
 
-        if isinstance(inter.typekind,int):
-            # Cython
-            if not (inter.typekind == ord('u') and inter.itemsize==1):
-                raise TypeError("must be uint8 arrays")
-        else:
-            # pyrex
-            if not (inter.typekind == "u"[0] and inter.itemsize==1):
-                raise TypeError("must be uint8 arrays")
+        if arr.dtype != np.uint8:
+            raise TypeError("must be uint8 arrays")
 
-    height = inter.shape[0]
-    width = inter.shape[1]
+    height = arr.shape[0]
+    width = arr.shape[1]
 
-    rgb8 = numpy.zeros(( height, width, 3), numpy.uint8)
+    rgb8_np = np.zeros((height,width,3), dtype=np.uint8)
+    cdef np.uint8_t[:, :,:] rgb8 = rgb8_np
 
-    rgb8_data_ptr = rgb8.data # we know rgb8 is contiguous
     with nogil:
-        for i from 0<=i<height:
-            mono8_row_ptr = <char*>inter.data + i*inter.strides[0]
-            mono8_data_ptr = mono8_row_ptr
-            for j from 0<=j<width:
-                for k from 0<=k<3:
-                    rgb8_data_ptr[0] = mono8_data_ptr[0]
-                    rgb8_data_ptr=rgb8_data_ptr+1
-                mono8_data_ptr = mono8_data_ptr + inter.strides[1]
-
-    return rgb8
+        for i in range(height):
+            for j in range(width):
+                for k in range(3):
+                    rgb8[i,j,k] = arr[i,j]
+    return rgb8_np
 
 def mono8_bayer_bggr_to_rgb8( arr ):
     # This is a super-crappy conversion I just hacked together.
     cdef int i,j,k,height,width
-    cdef char *rgb8_data_ptr, *mono8_data_ptr, *mono8_row_ptr
+    cdef char *rgb8_data_ptr
+    cdef char *mono8_data_ptr
+    cdef char *mono8_row_ptr
     cdef char cur_red, cur_green, cur_blue
     cdef c_numpy.ndarray rgb8
-    cdef PyArrayInterface* inter
     cdef int do_check
 
     height, width = arr.shape
