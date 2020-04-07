@@ -7,8 +7,6 @@ cdef extern from "Python.h":
     #cdef object PyExc_OSError
     ctypedef int Py_intptr_t
 #    ctypedef int Py_ssize_t
-    void Py_BEGIN_ALLOW_THREADS()
-    void Py_END_ALLOW_THREADS()
     void Py_INCREF(object)
     void Py_DECREF(object)
     

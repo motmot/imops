@@ -17,11 +17,11 @@ cdef extern from "color_convert.h":
         unsigned char Y
         unsigned char U
         unsigned char V
-    cdef RGB888_t YUV444toRGB888(unsigned char Y, unsigned char U, unsigned char V)
-    cdef YUV444_t RGB888toYUV444(unsigned char r, unsigned char g, unsigned char b)
+    cdef RGB888_t YUV444toRGB888(unsigned char Y, unsigned char U, unsigned char V) nogil
+    cdef YUV444_t RGB888toYUV444(unsigned char r, unsigned char g, unsigned char b) nogil
     cdef void mono16_buf_to_mono8_buf(u_int16_t *mono16_buf,
                                       u_int8_t *mono8_buf,
-                                      int len)
+                                      int len) nogil
 
 # for PyArrayInterface
 cdef int CONTIGUOUS
@@ -117,16 +117,15 @@ def mono8_to_rgb8(arr,skip_check=False):
     rgb8 = numpy.zeros(( height, width, 3), numpy.uint8)
 
     rgb8_data_ptr = rgb8.data # we know rgb8 is contiguous
-    c_python.Py_BEGIN_ALLOW_THREADS
-    for i from 0<=i<height:
-        mono8_row_ptr = <char*>inter.data + i*inter.strides[0]
-        mono8_data_ptr = mono8_row_ptr
-        for j from 0<=j<width:
-            for k from 0<=k<3:
-                rgb8_data_ptr[0] = mono8_data_ptr[0]
-                rgb8_data_ptr=rgb8_data_ptr+1
-            mono8_data_ptr = mono8_data_ptr + inter.strides[1]
-    c_python.Py_END_ALLOW_THREADS
+    with nogil:
+        for i from 0<=i<height:
+            mono8_row_ptr = <char*>inter.data + i*inter.strides[0]
+            mono8_data_ptr = mono8_row_ptr
+            for j from 0<=j<width:
+                for k from 0<=k<3:
+                    rgb8_data_ptr[0] = mono8_data_ptr[0]
+                    rgb8_data_ptr=rgb8_data_ptr+1
+                mono8_data_ptr = mono8_data_ptr + inter.strides[1]
 
     return rgb8
 
@@ -208,9 +207,8 @@ def mono16_to_mono8_middle8bits(c_numpy.ndarray mono16):
     width = int(width_in_bytes/bytes_per_pixel)
     mono8 = numpy.zeros(( height, width), numpy.uint8)
 
-    c_python.Py_BEGIN_ALLOW_THREADS
-    mono16_buf_to_mono8_buf( <u_int16_t *>mono16.data, <u_int8_t *>mono8.data, height*width )
-    c_python.Py_END_ALLOW_THREADS
+    with nogil:
+        mono16_buf_to_mono8_buf( <u_int16_t *>mono16.data, <u_int8_t *>mono8.data, height*width )
 
     return mono8
 
@@ -239,20 +237,19 @@ def yuv422_to_mono8(c_numpy.ndarray yuv422):
 
     mono8 = numpy.zeros(( height, width), numpy.uint8)
 
-    c_python.Py_BEGIN_ALLOW_THREADS
-    for pixpair from 0 <= pixpair < height*width_in_bytes/4:
-        baseptr = <unsigned char*>(yuv422.data + pixpair*4)
-        u = baseptr[0]
-        y1 = baseptr[1]
-        v = baseptr[2]
-        y2 = baseptr[3]
+    with nogil:
+        for pixpair from 0 <= pixpair < height*width_in_bytes/4:
+            baseptr = <unsigned char*>(yuv422.data + pixpair*4)
+            u = baseptr[0]
+            y1 = baseptr[1]
+            v = baseptr[2]
+            y2 = baseptr[3]
 
-        baseptr = <unsigned char*>(mono8.data + pixpair*2)
+            baseptr = <unsigned char*>(mono8.data + pixpair*2)
 
-        baseptr[0] = y1
-        baseptr[1] = y2
+            baseptr[0] = y1
+            baseptr[1] = y2
 
-    c_python.Py_END_ALLOW_THREADS
     return mono8
 
 def yuv422_to_rgb8(c_numpy.ndarray yuv422):
@@ -281,28 +278,27 @@ def yuv422_to_rgb8(c_numpy.ndarray yuv422):
 
     rgb8 = numpy.zeros(( height, width, 3), numpy.uint8)
 
-    c_python.Py_BEGIN_ALLOW_THREADS
-    for pixpair from 0 <= pixpair < height*width_in_bytes/4:
-        baseptr = <unsigned char*>(yuv422.data + pixpair*4)
-        u = baseptr[0]
-        y1 = baseptr[1]
-        v = baseptr[2]
-        y2 = baseptr[3]
+    with nogil:
+        for pixpair from 0 <= pixpair < height*width_in_bytes/4:
+            baseptr = <unsigned char*>(yuv422.data + pixpair*4)
+            u = baseptr[0]
+            y1 = baseptr[1]
+            v = baseptr[2]
+            y2 = baseptr[3]
 
-        tmp_rgb1 = YUV444toRGB888(y1,u,v)
-        tmp_rgb2 = YUV444toRGB888(y2,u,v)
+            tmp_rgb1 = YUV444toRGB888(y1,u,v)
+            tmp_rgb2 = YUV444toRGB888(y2,u,v)
 
-        baseptr = <unsigned char*>(rgb8.data + pixpair*6)
+            baseptr = <unsigned char*>(rgb8.data + pixpair*6)
 
-        baseptr[0] = tmp_rgb1.R
-        baseptr[1] = tmp_rgb1.G
-        baseptr[2] = tmp_rgb1.B
+            baseptr[0] = tmp_rgb1.R
+            baseptr[1] = tmp_rgb1.G
+            baseptr[2] = tmp_rgb1.B
 
-        baseptr[3] = tmp_rgb2.R
-        baseptr[4] = tmp_rgb2.G
-        baseptr[5] = tmp_rgb2.B
+            baseptr[3] = tmp_rgb2.R
+            baseptr[4] = tmp_rgb2.G
+            baseptr[5] = tmp_rgb2.B
 
-    c_python.Py_END_ALLOW_THREADS
     return rgb8
 
 def yuv411_to_rgb8(c_numpy.ndarray yuv411):
@@ -326,40 +322,39 @@ def yuv411_to_rgb8(c_numpy.ndarray yuv411):
     if width!=640:
         raise RuntimeError('expected width 640')
 
-    c_python.Py_BEGIN_ALLOW_THREADS
-    for pixpair from 0 <= pixpair < height*width_in_bytes/6:
-        baseptr = <unsigned char*>(yuv411.data + pixpair*6)
-        u = baseptr[0]
-        y1 = baseptr[1]
-        y2 = baseptr[2]
-        v = baseptr[3]
-        y3 = baseptr[4]
-        y4 = baseptr[5]
+    with nogil:
+        for pixpair from 0 <= pixpair < height*width_in_bytes/6:
+            baseptr = <unsigned char*>(yuv411.data + pixpair*6)
+            u = baseptr[0]
+            y1 = baseptr[1]
+            y2 = baseptr[2]
+            v = baseptr[3]
+            y3 = baseptr[4]
+            y4 = baseptr[5]
 
-        tmp_rgb1 = YUV444toRGB888(y1,u,v)
-        tmp_rgb2 = YUV444toRGB888(y2,u,v)
-        tmp_rgb3 = YUV444toRGB888(y3,u,v)
-        tmp_rgb4 = YUV444toRGB888(y4,u,v)
+            tmp_rgb1 = YUV444toRGB888(y1,u,v)
+            tmp_rgb2 = YUV444toRGB888(y2,u,v)
+            tmp_rgb3 = YUV444toRGB888(y3,u,v)
+            tmp_rgb4 = YUV444toRGB888(y4,u,v)
 
-        baseptr = <unsigned char*>(rgb8.data + pixpair*12)
+            baseptr = <unsigned char*>(rgb8.data + pixpair*12)
 
-        baseptr[0] = tmp_rgb1.R
-        baseptr[1] = tmp_rgb1.G
-        baseptr[2] = tmp_rgb1.B
+            baseptr[0] = tmp_rgb1.R
+            baseptr[1] = tmp_rgb1.G
+            baseptr[2] = tmp_rgb1.B
 
-        baseptr[3] = tmp_rgb2.R
-        baseptr[4] = tmp_rgb2.G
-        baseptr[5] = tmp_rgb2.B
+            baseptr[3] = tmp_rgb2.R
+            baseptr[4] = tmp_rgb2.G
+            baseptr[5] = tmp_rgb2.B
 
-        baseptr[6] = tmp_rgb3.R
-        baseptr[7] = tmp_rgb3.G
-        baseptr[8] = tmp_rgb3.B
+            baseptr[6] = tmp_rgb3.R
+            baseptr[7] = tmp_rgb3.G
+            baseptr[8] = tmp_rgb3.B
 
-        baseptr[9] = tmp_rgb4.R
-        baseptr[10] = tmp_rgb4.G
-        baseptr[11] = tmp_rgb4.B
+            baseptr[9] = tmp_rgb4.R
+            baseptr[10] = tmp_rgb4.G
+            baseptr[11] = tmp_rgb4.B
 
-    c_python.Py_END_ALLOW_THREADS
     return rgb8
 
 def to_rgb8(format,image):
