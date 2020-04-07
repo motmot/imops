@@ -14,9 +14,7 @@ cdef extern from "Python.h":
     
     object PyCObject_FromVoidPtr( void* cobj, void (*destr)(void *))
     object PyCObject_FromVoidPtrAndDesc( void* cobj, void* desc, void (*destr)(void *, void *))
-    int PyCObject_Check(arr)
-    void* PyCObject_AsVoidPtr(object)
-    
+
     object PyLong_FromVoidPtr( void *p)
     void* PyLong_AsVoidPtr( object )
     object PyString_FromStringAndSize( char *v, int len )
