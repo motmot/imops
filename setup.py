@@ -16,7 +16,7 @@ setup(
     description="image format conversion (e.g. between MONO8, YUV422, and RGB)",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    version="0.5.9",
+    version="0.5.10",
     license="BSD",
     maintainer="Andrew Straw",
     maintainer_email="strawman@astraw.com",
