@@ -87,11 +87,8 @@ def mono8_to_rgb8(const np.uint8_t[:, :] arr,skip_check=False):
     do_check = not skip_check
 
     if do_check:
-        if arr.nd != 2:
+        if arr.ndim != 2:
             raise ValueError("only 2D arrays are accepted (currently) mono8")
-
-        if arr.dtype != np.uint8:
-            raise TypeError("must be uint8 arrays")
 
     height = arr.shape[0]
     width = arr.shape[1]
