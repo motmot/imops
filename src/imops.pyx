@@ -54,7 +54,7 @@ def rgb8_to_rgb8(arr,skip_check=False):
     s = rgb8.shape
     if len(s) == 2:
       height = s[0]
-      width = s[1]/3
+      width = s[1]//3
       rgb8.shape = ( height, width, 3)
       return rgb8
     else: return rgb8
@@ -65,7 +65,7 @@ def rgb32f_to_rgb8(arr,skip_check=False):
     s = rgb8.shape
     if len(s) == 2:
       height = s[0]
-      width = s[1]/3
+      width = s[1]//3
       rgb8.shape = ( height, width, 3)
       return rgb8
     else: return rgb8
@@ -73,7 +73,7 @@ def rgb32f_to_rgb8(arr,skip_check=False):
 def argb8_to_rgb8(arr,skip_check=False):
     argb8 = numpy.asarray(arr) # view of data (if possible)
     height,datawidth=arr.shape
-    width=datawidth/4
+    width=datawidth//4
     argb8.shape = ( height, width, 4)
     rgb8 = numpy.array(argb8[:,:,1:],copy=True) # make contiguous
     return rgb8
@@ -136,7 +136,7 @@ def mono8_bayer_bggr_to_rgb8( arr ):
     B_rows,B_cols = np.meshgrid(b_rows,b_cols)
     bggr_b_pattern = B_rows.ravel(), B_cols.ravel()
 
-    transposed_shape = width/2,height/2 # integer division
+    transposed_shape = width//2,height//2 # integer division
     r_data = arr[bggr_r_pattern]
     r_data.shape = transposed_shape
     r_data = r_data.T
@@ -213,7 +213,7 @@ def yuv422_to_mono8(c_numpy.ndarray yuv422):
     mono8 = numpy.zeros(( height, width), numpy.uint8)
 
     with nogil:
-        for pixpair from 0 <= pixpair < height*width_in_bytes/4:
+        for pixpair from 0 <= pixpair < height*width_in_bytes//4:
             baseptr = <unsigned char*>(yuv422.data + pixpair*4)
             u = baseptr[0]
             y1 = baseptr[1]
@@ -254,7 +254,7 @@ def yuv422_to_rgb8(c_numpy.ndarray yuv422):
     rgb8 = numpy.zeros(( height, width, 3), numpy.uint8)
 
     with nogil:
-        for pixpair from 0 <= pixpair < height*width_in_bytes/4:
+        for pixpair from 0 <= pixpair < height*width_in_bytes//4:
             baseptr = <unsigned char*>(yuv422.data + pixpair*4)
             u = baseptr[0]
             y1 = baseptr[1]
@@ -298,7 +298,7 @@ def yuv411_to_rgb8(c_numpy.ndarray yuv411):
         raise RuntimeError('expected width 640')
 
     with nogil:
-        for pixpair from 0 <= pixpair < height*width_in_bytes/6:
+        for pixpair from 0 <= pixpair < height*width_in_bytes//6:
             baseptr = <unsigned char*>(yuv411.data + pixpair*6)
             u = baseptr[0]
             y1 = baseptr[1]
