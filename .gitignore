@@ -1,11 +1,6 @@
 build
 dist
-motmot.imops.egg-info/PKG-INFO
-motmot.imops.egg-info/SOURCES.txt
-motmot.imops.egg-info/dependency_links.txt
-motmot.imops.egg-info/namespace_packages.txt
-motmot.imops.egg-info/top_level.txt
-motmot.imops.egg-info/zip-safe
+src/motmot.imops.egg-info
 *.pyc
 *~
 motmot/imops/imops.so
